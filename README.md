@@ -13,8 +13,6 @@ Creates a Confluent Cloud Kafka cluster, topics, service accounts, role bindings
 ```hcl
 module "confluent-kafka-cluster" {
   source                            = "github.com/dapperlabs-platform/terraform-confluent-official-kafka-cluster?ref=tag"
-  confluent_cloud_username          = "<username>"
-  confluent_cloud_password          = "<password>"
   name                              = "cluster-name"
   environment                       = "staging"
   gcp_region                        = "us-west1"
@@ -22,6 +20,8 @@ module "confluent-kafka-cluster" {
   kafka_lag_exporter_image_version  = "<lookup>"
   metric_exporters_namespace        = "sre"
   create_grafana_dashboards         = true
+  availability                                   = "MULTI_ZONE"
+  cku                                              = 2
   grafana_datasource                = "Default Datasource"
   topics = {
     "topic-1" = {
