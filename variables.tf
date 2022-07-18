@@ -109,3 +109,9 @@ variable "grafana_datasource" {
   type        = string
   default     = null
 }
+
+#TODO remove this after we have increased our number of environments
+variable "environment_id" {
+  type = string
+  description = "environment id to fetch existing confluent environment"
+}

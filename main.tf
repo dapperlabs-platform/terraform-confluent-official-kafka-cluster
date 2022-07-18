@@ -45,10 +45,12 @@ locals {
 resource "random_pet" "pet" {}
 
 # Cloud Environment
+#TODO  remove this after we have increased our number of environments
 data "confluent_environment" "environment" {
-  id = "env-op92o"
+  id = var.environment_id
 }
 
+#TODO  re-enable this after we have increased our number of environments
 #resource "confluent_environment" "environment" {
 #  display_name = local.name
 #}
