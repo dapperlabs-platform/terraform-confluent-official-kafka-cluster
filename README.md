@@ -19,7 +19,10 @@ module "confluent-kafka-cluster" {
   cku                      = 2
   availability             = "MULTI_ZONE"
   use_existing_environment = true
-  grafana_datasource                = "Default Datasource"
+  
+  # Only needed if using existing environment
+  environment_id = "env-xx92o"
+  
   topics = {
     "topic-1" = {
       replication_factor = 3
