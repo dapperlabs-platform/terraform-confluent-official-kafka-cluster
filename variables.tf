@@ -36,11 +36,11 @@ variable "add_service_account_suffix" {
   default     = false
 }
 
-variable "enable_metric_exporters" {
-  description = "Whether to deploy kafka-lag-exporter and ccloud-exporter in a kubernetes cluster"
-  type        = bool
-  default     = false
-}
+#variable "enable_metric_exporters" {
+#  description = "Whether to deploy kafka-lag-exporter and ccloud-exporter in a kubernetes cluster"
+#  type        = bool
+#  default     = false
+#}
 
 variable "service_provider" {
   description = "Confluent cloud service provider. AWS, GCP, Azure"
@@ -60,58 +60,14 @@ variable "cku" {
   default     = null
 }
 
-variable "metric_exporters_namespace" {
-  description = "Namespace to deploy exporters to"
-  type        = string
-  default     = "sre"
-}
-
-variable "kafka_lag_exporter_annotations" {
-  description = "Lag exporter annotations"
-  type        = map(string)
-  default     = {}
-}
-
-variable "exporters_node_selector" {
-  description = "K8S Deployment node selector for metric exporters"
-  type        = map(string)
-  default     = null
-}
-
-variable "kafka_lag_exporter_image_version" {
-  description = "See https://github.com/seglo/kafka-lag-exporter/releases"
-  type        = string
-}
-
-variable "kafka_lag_exporter_container_resources" {
-  description = "Container resource limit configuration"
-  type        = map(map(string))
-  default = {
-    requests = {
-      cpu    = "250m"
-      memory = "1Gi"
-    }
-    limits = {
-      cpu    = "500m"
-      memory = "2Gi"
-    }
-  }
-}
-
-variable "create_grafana_dashboards" {
-  description = "Whether to create grafana dashboards with default metric exporter panels"
+variable "use_existing_environment" {
+  description = "Use existing confluent cloud environment or not"
   type        = bool
   default     = false
 }
 
-variable "grafana_datasource" {
-  description = "Name of Grafana data source where Kafka metrics are stored"
-  type        = string
-  default     = null
-}
-
-#TODO remove this after we have increased our number of environments
 variable "environment_id" {
-  type = string
+  type        = string
   description = "environment id to fetch existing confluent environment"
+  default     = "env-op92o"
 }

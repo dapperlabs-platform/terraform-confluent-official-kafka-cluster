@@ -4,14 +4,6 @@ terraform {
       source  = "confluentinc/confluent"
       version = ">=1.0.0"
     }
-    grafana = {
-      source  = "grafana/grafana"
-      version = ">= 1.14.0"
-    }
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = ">= 2"
-    }
   }
 }
 
@@ -32,7 +24,7 @@ locals {
   ])
   writers_map = { for v in local.topic_writers : "${v.topic}/${v.user}" => v }
   bootstrap_servers = [
-      replace(confluent_kafka_cluster.cluster.bootstrap_endpoint, "SASL_SSL://", "")
+    replace(confluent_kafka_cluster.cluster.bootstrap_endpoint, "SASL_SSL://", "")
   ]
   service_accounts = distinct(
     concat(
@@ -44,16 +36,17 @@ locals {
 
 resource "random_pet" "pet" {}
 
-# Cloud Environment
-#TODO  remove this after we have increased our number of environments
+
+# Cloud Environment(use existing or create new one)
 data "confluent_environment" "environment" {
-  id = var.environment_id
+  count = var.use_existing_environment ? 1 : 0
+  id    = var.environment_id
 }
 
-#TODO  re-enable this after we have increased our number of environments
-#resource "confluent_environment" "environment" {
-#  display_name = local.name
-#}
+resource "confluent_environment" "environment" {
+  count        = var.use_existing_environment ? 0 : 1
+  display_name = local.name
+}
 
 # Admin Service Account
 resource "confluent_service_account" "admin_service_account" {
@@ -84,8 +77,7 @@ resource "confluent_api_key" "admin_api_key" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      #TODO id = confluent_environment.environment.id
-      id = data.confluent_environment.environment.id
+      id = var.use_existing_environment ? data.confluent_environment.environment[0].id : confluent_environment.environment[0].id
     }
   }
   depends_on = [
@@ -109,7 +101,7 @@ resource "confluent_role_binding" "service_accounts_cluster_role_binding" {
 }
 
 # Service Accounts API Keys
-resource "confluent_api_key" "service_account_api_key" {
+resource "confluent_api_key" "service_account_api_keys" {
   for_each     = toset(local.service_accounts)
   display_name = "${local.name}-${each.value}-${random_pet.pet.id}-api-key"
   description  = "${local.name}-${each.value}-${random_pet.pet.id}-api-key"
@@ -125,172 +117,12 @@ resource "confluent_api_key" "service_account_api_key" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      #TODO id = confluent_environment.environment.id
-      id = data.confluent_environment.environment.id
+      id = var.use_existing_environment ? data.confluent_environment.environment[0].id : confluent_environment.environment[0].id
     }
   }
   depends_on = [
     confluent_role_binding.service_accounts_cluster_role_binding
   ]
-}
-
-# Confluent Cloud Exporter Service Account
-resource "confluent_service_account" "ccloud_exporter_service_account" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  display_name = "${local.name}-ccloud-exporter-service-account"
-  description  = "${local.name}-ccloud-exporter-service-account"
-}
-
-# Confluent Cloud Exporter Service Account Role Binding
-resource "confluent_role_binding" "ccloud_exporter_role_binding" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  principal   = "User:${confluent_service_account.ccloud_exporter_service_account[0].id}"
-  role_name   = "CloudClusterAdmin"
-  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
-
-  depends_on = [
-    confluent_service_account.ccloud_exporter_service_account
-  ]
-}
-
-# Confluent Cloud Exporter API Key
-resource "confluent_api_key" "ccloud_exporter_api_key" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  display_name = "${local.name}-ccloud-exporter-api-key"
-  description  = "${local.name}-ccloud-exporter-api-key"
-  owner {
-    id          = confluent_service_account.ccloud_exporter_service_account[0].id
-    api_version = confluent_service_account.ccloud_exporter_service_account[0].api_version
-    kind        = confluent_service_account.ccloud_exporter_service_account[0].kind
-  }
-
-  managed_resource {
-    id          = confluent_kafka_cluster.cluster.id
-    api_version = confluent_kafka_cluster.cluster.api_version
-    kind        = confluent_kafka_cluster.cluster.kind
-
-    environment {
-      #TODO id = confluent_environment.environment.id
-      id = data.confluent_environment.environment.id
-    }
-  }
-  depends_on = [
-    confluent_role_binding.ccloud_exporter_role_binding
-  ]
-}
-
-# Kafka Lag Exporter Service Account
-resource "confluent_service_account" "kafka_lag_exporter_service_account" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  display_name = "${local.name}-kafka-lag-exporter-service-account"
-  description  = "${local.name}-kafka-lag-exporter-service-account"
-}
-
-# Kafka Lag Exporter Service Account Role Binding
-resource "confluent_role_binding" "kafka_lag_exporter_role_binding" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  principal   = "User:${confluent_service_account.kafka_lag_exporter_service_account[0].id}"
-  role_name   = "CloudClusterAdmin"
-  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
-
-  depends_on = [
-    confluent_service_account.kafka_lag_exporter_service_account
-  ]
-}
-
-# Kafka Lag Exporter API Key
-resource "confluent_api_key" "kafka_lag_exporter_api_key" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  display_name = "${local.name}-kafka-lag-exporter-api-key"
-  description  = "${local.name}-kafka-lag-exporter-api-key"
-  owner {
-    id          = confluent_service_account.kafka_lag_exporter_service_account[0].id
-    api_version = confluent_service_account.kafka_lag_exporter_service_account[0].api_version
-    kind        = confluent_service_account.kafka_lag_exporter_service_account[0].kind
-  }
-
-  managed_resource {
-    id          = confluent_kafka_cluster.cluster.id
-    api_version = confluent_kafka_cluster.cluster.api_version
-    kind        = confluent_kafka_cluster.cluster.kind
-
-    environment {
-      #TODO id = confluent_environment.environment.id
-      id = data.confluent_environment.environment.id
-    }
-  }
-  depends_on = [
-    confluent_role_binding.kafka_lag_exporter_role_binding
-  ]
-}
-
-# Kafka Lag Exporter Read Topic ACL
-resource "confluent_kafka_acl" "kafka_lag_exporter_read_topic" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-  resource_type = "TOPIC"
-  resource_name = "*"
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.kafka_lag_exporter_service_account[0].id}"
-  host          = "*"
-  operation     = "READ"
-  permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.kafka_lag_exporter_api_key[0].id
-    secret = confluent_api_key.kafka_lag_exporter_api_key[0].secret
-  }
-}
-
-# Kafka Lag Exporter Describe Topic ACL
-resource "confluent_kafka_acl" "kafka_lag_exporter_describe_topic" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-  resource_type = "TOPIC"
-  resource_name = "*"
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.kafka_lag_exporter_service_account[0].id}"
-  host          = "*"
-  operation     = "DESCRIBE"
-  permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.kafka_lag_exporter_api_key[0].id
-    secret = confluent_api_key.kafka_lag_exporter_api_key[0].secret
-  }
-}
-
-# Kafka Lag Exporter Describe Group ACL
-resource "confluent_kafka_acl" "kafka_lag_exporter_describe_group" {
-  count = var.enable_metric_exporters ? 1 : 0
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-  resource_type = "GROUP"
-  resource_name = "*"
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.kafka_lag_exporter_service_account[0].id}"
-  host          = "*"
-  operation     = "DESCRIBE"
-  permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.kafka_lag_exporter_api_key[0].id
-    secret = confluent_api_key.kafka_lag_exporter_api_key[0].secret
-  }
 }
 
 # Cluster
@@ -304,8 +136,7 @@ resource "confluent_kafka_cluster" "cluster" {
   }
 
   environment {
-    #   #TODO  id = confluent_environment.environment.id
-    id = data.confluent_environment.environment.id
+    id = var.use_existing_environment ? data.confluent_environment.environment[0].id : confluent_environment.environment[0].id
   }
 }
 
@@ -341,8 +172,8 @@ resource "confluent_kafka_acl" "readers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_key[each.value.user].id
-    secret = confluent_api_key.service_account_api_key[each.value.user].secret
+    key    = confluent_api_key.service_account_api_keys[each.value.user].id
+    secret = confluent_api_key.service_account_api_keys[each.value.user].secret
   }
 }
 
@@ -362,8 +193,8 @@ resource "confluent_kafka_acl" "writers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_key[each.value.user].id
-    secret = confluent_api_key.service_account_api_key[each.value.user].secret
+    key    = confluent_api_key.service_account_api_keys[each.value.user].id
+    secret = confluent_api_key.service_account_api_keys[each.value.user].secret
   }
 }
 
@@ -383,7 +214,7 @@ resource "confluent_kafka_acl" "group_readers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_key[each.value].id
-    secret = confluent_api_key.service_account_api_key[each.value].secret
+    key    = confluent_api_key.service_account_api_keys[each.value].id
+    secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
