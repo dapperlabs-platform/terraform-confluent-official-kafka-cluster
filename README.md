@@ -16,12 +16,19 @@ module "confluent-kafka-cluster" {
   environment              = "DEMO"
   gcp_region               = var.default_region
   name                     = "cruise"
+
+  # OPTIONAL: Only needed when creating dedicated cluster, if not provided defaults to 2
   cku                      = 2
-  availability             = "MULTI_ZONE"
+
+  # OPTIONAL: only needed if using existing environment, you need to provide
+  # environment id or it uses the default environment
   use_existing_environment = true
-  
-  # Only needed if using existing environment
-  environment_id = "env-xx92o"
+
+  # you must provide one of: basic, standard or dedicated
+  cluster_type             = "dedicated"
+
+  # Note Basic Cluster cannot have MULTI_ZONE availability just SINGLE_ZONE
+  availability             = "MULTI_ZONE"
   
   topics = {
     "topic-1" = {

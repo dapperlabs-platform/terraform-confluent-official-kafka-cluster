@@ -36,12 +36,6 @@ variable "add_service_account_suffix" {
   default     = false
 }
 
-#variable "enable_metric_exporters" {
-#  description = "Whether to deploy kafka-lag-exporter and ccloud-exporter in a kubernetes cluster"
-#  type        = bool
-#  default     = false
-#}
-
 variable "service_provider" {
   description = "Confluent cloud service provider. AWS, GCP, Azure"
   type        = string
@@ -57,7 +51,7 @@ variable "availability" {
 variable "cku" {
   description = "Number of CKUs"
   type        = number
-  default     = null
+  default     = 2
 }
 
 variable "use_existing_environment" {
@@ -70,4 +64,9 @@ variable "environment_id" {
   type        = string
   description = "environment id to fetch existing confluent environment"
   default     = "env-op92o"
+}
+
+variable "cluster_type" {
+  type = string
+  description = "type of cluster to provision: basic, standard or dedicated"
 }

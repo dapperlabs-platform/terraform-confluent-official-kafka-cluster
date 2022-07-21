@@ -11,21 +11,22 @@ locals {
   name    = "${var.environment}-${var.name}"
   lc_name = lower(local.name)
   topic_readers = flatten([
-    for name, values in var.topics :
-    [for user in values.acl_readers : { topic : name, user : user }]
+  for name, values in var.topics :
+  [for user in values.acl_readers : { topic : name, user : user }]
   ])
   readers_map = { for v in local.topic_readers : "${v.topic}/${v.user}" => v }
   readers_set = toset([
-    for r in local.topic_readers : r.user
+  for r in local.topic_readers : r.user
   ])
   topic_writers = flatten([
-    for name, values in var.topics :
-    [for user in values.acl_writers : { topic : name, user : user }]
+  for name, values in var.topics :
+  [for user in values.acl_writers : { topic : name, user : user }]
   ])
   writers_map = { for v in local.topic_writers : "${v.topic}/${v.user}" => v }
   bootstrap_servers = [
     replace(confluent_kafka_cluster.cluster.bootstrap_endpoint, "SASL_SSL://", "")
   ]
+  plans = [ "basic", "standard", "dedicated" ]
   service_accounts = distinct(
     concat(
       [for v in local.readers_map : v.user],
@@ -131,8 +132,22 @@ resource "confluent_kafka_cluster" "cluster" {
   availability = var.availability
   cloud        = var.service_provider
   region       = var.gcp_region
-  dedicated {
-    cku = var.cku
+
+  dynamic "basic" {
+    for_each = var.cluster_type == "basic" ? [local.plans] : []
+    content {}
+  }
+
+  dynamic "standard" {
+    for_each = var.cluster_type == "standard" ? [local.plans] : []
+    content {}
+  }
+
+  dynamic "dedicated" {
+    for_each = var.cluster_type == "dedicated" ? [local.plans] : []
+    content {
+      cku = var.cku
+    }
   }
 
   environment {
