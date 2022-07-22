@@ -67,6 +67,6 @@ variable "environment_id" {
 }
 
 variable "cluster_type" {
-  type = string
+  type        = string
   description = "type of cluster to provision: basic, standard or dedicated"
 }
