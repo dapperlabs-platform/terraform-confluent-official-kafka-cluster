@@ -45,7 +45,6 @@ locals {
 resource "random_pet" "pet" {}
 
 resource "confluent_environment" "environment" {
-  count        = var.use_existing_environment ? 0 : 1
   display_name = local.name
 }
 
