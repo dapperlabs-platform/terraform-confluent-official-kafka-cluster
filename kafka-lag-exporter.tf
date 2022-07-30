@@ -146,7 +146,7 @@ resource "confluent_service_account" "kafka_lag_exporter" {
 resource "confluent_role_binding" "kafka_lag_exporter_cluster_role_binding" {
   count = var.enable_metric_exporters ? 1 : 0
 
-  principal   = "User:${confluent_service_account.kafka_lag_exporter.id}"
+  principal   = "User:${confluent_service_account.kafka_lag_exporter[0].id}"
   role_name   = "CloudClusterAdmin"
   crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
 }
@@ -157,9 +157,9 @@ resource "confluent_api_key" "kafka_lag_exporter_api_key" {
   display_name = "${local.name}-kafka-lag-exporter${var.add_service_account_suffix ? "-${random_pet.pet.id}" : ""}-api-key"
   description  = "${local.name} Kafka lag exporter api key"
   owner {
-    id          = confluent_service_account.kafka_lag_exporter.id
-    api_version = confluent_service_account.kafka_lag_exporter.api_version
-    kind        = confluent_service_account.kafka_lag_exporter.kind
+    id          = confluent_service_account.kafka_lag_exporter[0].id
+    api_version = confluent_service_account.kafka_lag_exporter[0].api_version
+    kind        = confluent_service_account.kafka_lag_exporter[0].kind
   }
 
   managed_resource {
