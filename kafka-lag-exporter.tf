@@ -29,8 +29,8 @@ resource "kubernetes_secret" "lag_exporter_config" {
   data = {
     "application.conf" = templatefile(
       "${path.module}/templates/application.conf", {
-        username         = confluentcloud_api_key.kafka_lag_exporter_api_key[0].key
-        password         = confluentcloud_api_key.kafka_lag_exporter_api_key[0].secret
+        username         = confluent_api_key.kafka_lag_exporter_api_key[0].key
+        password         = confluent_api_key.kafka_lag_exporter_api_key[0].secret
         namespace        = var.metric_exporters_namespace
         bootstrapBrokers = local.bootstrap_servers[0]
         clusterName      = local.lc_name
@@ -168,7 +168,7 @@ resource "confluent_api_key" "kafka_lag_exporter_api_key" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      id = confluent_environment.environment[0].id
+      id = confluent_environment.environment.id
     }
   }
   depends_on = [
