@@ -45,25 +45,13 @@ variable "service_provider" {
 variable "availability" {
   description = "Cluster availability. SINGLE_ZONE or MULTI_ZONE"
   type        = string
-  default     = "SINGLE_ZONE"
+  default     = "MULTI_ZONE"
 }
 
 variable "cku" {
   description = "Number of CKUs"
   type        = number
   default     = 2
-}
-
-variable "use_existing_environment" {
-  description = "Use existing confluent cloud environment or not"
-  type        = bool
-  default     = false
-}
-
-variable "environment_id" {
-  type        = string
-  description = "environment id to fetch existing confluent environment"
-  default     = "env-op92o"
 }
 
 variable "cluster_type" {
