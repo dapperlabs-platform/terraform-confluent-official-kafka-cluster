@@ -54,7 +54,7 @@ variable "cku" {
   default     = 2
 }
 
-variable "cluster_type" {
+variable "cluster_tier" {
   type        = string
   description = "type of cluster to provision: basic, standard or dedicated"
 }

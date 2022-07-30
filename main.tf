@@ -134,17 +134,17 @@ resource "confluent_kafka_cluster" "cluster" {
   region       = var.gcp_region
 
   dynamic "basic" {
-    for_each = var.cluster_type == "basic" ? [1] : []
+    for_each = lower(var.cluster_tier) == "basic" ? [1] : []
     content {}
   }
 
   dynamic "standard" {
-    for_each = var.cluster_type == "standard" ? [1] : []
+    for_each = lower(var.cluster_tier) == "standard" ? [1] : []
     content {}
   }
 
   dynamic "dedicated" {
-    for_each = var.cluster_type == "dedicated" ? [1] : []
+    for_each = lower(var.cluster_tier) == "dedicated" ? [1] : []
     content {
       cku = var.cku
     }
