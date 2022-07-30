@@ -186,14 +186,14 @@ resource "confluent_kafka_acl" "kafka_lag_exporter_read_topic" {
   resource_type = "TOPIC"
   resource_name = "*"
   pattern_type  = "LITERAL"
-  principal     = "User:${confluentcloud_service_account.kafka_lag_exporter.id}"
+  principal     = "User:${confluent_service_account.kafka_lag_exporter[0].id}"
   host          = "*"
   operation     = "READ"
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.kafka_lag_exporter_api_key.id
-    secret = confluent_api_key.kafka_lag_exporter_api_key.secret
+    key    = confluent_api_key.kafka_lag_exporter_api_key[0].id
+    secret = confluent_api_key.kafka_lag_exporter_api_key[0].secret
   }
 }
 
@@ -207,14 +207,14 @@ resource "confluent_kafka_acl" "kafka_lag_exporter_describe_topic" {
   resource_type = "TOPIC"
   resource_name = "*"
   pattern_type  = "LITERAL"
-  principal     = "User:${confluentcloud_service_account.kafka_lag_exporter.id}"
+  principal     = "User:${confluent_service_account.kafka_lag_exporter[0].id}"
   host          = "*"
   operation     = "DESCRIBE"
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.kafka_lag_exporter_api_key.id
-    secret = confluent_api_key.kafka_lag_exporter_api_key.secret
+    key    = confluent_api_key.kafka_lag_exporter_api_key[0].id
+    secret = confluent_api_key.kafka_lag_exporter_api_key[0].secret
   }
 }
 
@@ -228,13 +228,13 @@ resource "confluent_kafka_acl" "kafka_lag_exporter_describe_consumer_group" {
   resource_type = "GROUP"
   resource_name = "*"
   pattern_type  = "LITERAL"
-  principal     = "User:${confluentcloud_service_account.kafka_lag_exporter.id}"
+  principal     = "User:${confluentcloud_service_account.kafka_lag_exporter[0].id}"
   host          = "*"
   operation     = "DESCRIBE"
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.kafka_lag_exporter_api_key.id
-    secret = confluent_api_key.kafka_lag_exporter_api_key.secret
+    key    = confluent_api_key.kafka_lag_exporter_api_key[0].id
+    secret = confluent_api_key.kafka_lag_exporter_api_key[0].secret
   }
 }
