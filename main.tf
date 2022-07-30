@@ -77,7 +77,7 @@ resource "confluent_api_key" "admin_api_key" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      id = confluent_environment.environment[0].id
+      id = confluent_environment.environment.id
     }
   }
   depends_on = [
