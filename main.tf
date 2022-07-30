@@ -117,7 +117,7 @@ resource "confluent_api_key" "service_account_api_keys" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      id = confluent_environment.environment[0].id
+      id = confluent_environment.environment.id
     }
   }
   depends_on = [
@@ -150,7 +150,7 @@ resource "confluent_kafka_cluster" "cluster" {
   }
 
   environment {
-    id = confluent_environment.environment[0].id
+    id = confluent_environment.environment.id
   }
 }
 
