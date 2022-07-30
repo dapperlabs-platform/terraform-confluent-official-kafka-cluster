@@ -180,7 +180,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "rate(ccloud_metric_received_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}}[$__rate_interval])",
+          "expr": "rate(ccloud_metric_received_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}\"}[$__rate_interval])",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -247,7 +247,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "rate(ccloud_metric_sent_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}}[$__rate_interval])",
+          "expr": "rate(ccloud_metric_sent_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}\"}[$__rate_interval])",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -314,7 +314,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum(rate(ccloud_metric_request_count{type=~\".*\", cluster_name=\"${clusterName}}[$__rate_interval]))",
+          "expr": "sum(rate(ccloud_metric_request_count{type=~\".*\", cluster_name=\"${clusterName}\"}[$__rate_interval]))",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -381,7 +381,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum(ccloud_metric_retained_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}})/3",
+          "expr": "sum(ccloud_metric_retained_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}\"})/3",
           "interval": "",
           "legendFormat": "{{cluster}}",
           "refId": "A"
@@ -669,7 +669,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum by (kafka_id, topic) (ccloud_metric_retained_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}})",
+          "expr": "sum by (kafka_id, topic) (ccloud_metric_retained_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{kafka_id}}-{{topic}}",
@@ -756,7 +756,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum by (topic, kafka_id) (ccloud_metric_received_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}})",
+          "expr": "sum by (topic, kafka_id) (ccloud_metric_received_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{topic}} - {{kafka_id}}",
@@ -845,7 +845,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum by (topic, kafka_id) (ccloud_metric_sent_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}})",
+          "expr": "sum by (topic, kafka_id) (ccloud_metric_sent_bytes{topic=~\"$topic\", cluster_name=\"${clusterName}\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{topic}} - {{kafka_id}}",
@@ -932,7 +932,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum by (topic, kafka_id) (ccloud_metric_received_records{topic=~\"$topic\", cluster_name=\"${clusterName}})",
+          "expr": "sum by (topic, kafka_id) (ccloud_metric_received_records{topic=~\"$topic\", cluster_name=\"${clusterName}\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{topic}} - {{kafka_id}}",
@@ -1019,7 +1019,7 @@
       "targets": [
         {
           "datasource": "${datasource}",
-          "expr": "sum by (topic, kafka_id) (ccloud_metric_sent_records{topic=~\"$topic\", cluster_name=\"${clusterName}})",
+          "expr": "sum by (topic, kafka_id) (ccloud_metric_sent_records{topic=~\"$topic\", cluster_name=\"${clusterName}\"})",
           "hide": false,
           "interval": "",
           "legendFormat": "{{topic}} - {{kafka_id}}",
@@ -1205,7 +1205,7 @@
           "targets": [
             {
               "datasource": "${datasource}",
-              "expr": "ccloud_metric_connector_dead_letter_queue_records{connector_cluster_name=\"${clusterName}}",
+              "expr": "ccloud_metric_connector_dead_letter_queue_records{connector_cluster_name=\"${clusterName}\"}",
               "interval": "",
               "legendFormat": "{{connector_kafka_id}} -- {{connector_id}}",
               "queryType": "randomWalk",
@@ -1258,7 +1258,7 @@
           "targets": [
             {
               "datasource": "${datasource}",
-              "expr": "count(ccloud_metric_connector_dead_letter_queue_records{connector_cluster_name=\"${clusterName}})",
+              "expr": "count(ccloud_metric_connector_dead_letter_queue_records{connector_cluster_name=\"${clusterName}\"})",
               "interval": "",
               "legendFormat": "",
               "queryType": "randomWalk",
@@ -1317,7 +1317,7 @@
           "targets": [
             {
               "datasource": "${datasource}",
-              "expr": "ccloud_metric_connector_sent_records{connector_cluster_name=\"${clusterName}}",
+              "expr": "ccloud_metric_connector_sent_records{connector_cluster_name=\"${clusterName}\"}",
               "interval": "",
               "legendFormat": "{{connector_kafka_id}} -- {{connector_id}}",
               "queryType": "randomWalk",
@@ -1403,7 +1403,7 @@
           "targets": [
             {
               "datasource": "${datasource}",
-              "expr": "ccloud_metric_connector_received_bytes{connector_cluster_name=\"${clusterName}}",
+              "expr": "ccloud_metric_connector_received_bytes{connector_cluster_name=\"${clusterName}\"}",
               "interval": "",
               "legendFormat": "{{connector_kafka_id}} -- {{connector_id}}",
               "queryType": "randomWalk",
@@ -1489,7 +1489,7 @@
           "targets": [
             {
               "datasource": "${datasource}",
-              "expr": "ccloud_metric_connector_sent_bytes{connector_cluster_name=\"${clusterName}}",
+              "expr": "ccloud_metric_connector_sent_bytes{connector_cluster_name=\"${clusterName}\"}",
               "interval": "",
               "legendFormat": "{{connector_kafka_id}} -- {{connector_id}}",
               "queryType": "randomWalk",
@@ -1575,7 +1575,7 @@
           "targets": [
             {
               "datasource": "${datasource}",
-              "expr": "ccloud_metric_connector_received_records{connector_cluster_name=\"${clusterName}}",
+              "expr": "ccloud_metric_connector_received_records{connector_cluster_name=\"${clusterName}\"}",
               "interval": "",
               "legendFormat": "{{connector_kafka_id}} -- {{connector_id}}",
               "queryType": "randomWalk",
