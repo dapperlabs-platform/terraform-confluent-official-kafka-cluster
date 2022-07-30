@@ -139,8 +139,8 @@ resource "kubernetes_deployment" "lag_exporter_deployment" {
 resource "confluent_service_account" "kafka_lag_exporter" {
   count = var.enable_metric_exporters ? 1 : 0
 
- name        = "${local.lc_name}-kafka-lag-exporter${var.add_service_account_suffix ? "-${random_pet.pet.id}" : ""}"
-  description = "Kafka lag exporter service account"
+  display_name = "${local.lc_name}-kafka-lag-exporter${var.add_service_account_suffix ? "-${random_pet.pet.id}" : ""}"
+  description  = "Kafka lag exporter service account"
 }
 
 resource "confluent_role_binding" "kafka_lag_exporter_cluster_role_binding" {
