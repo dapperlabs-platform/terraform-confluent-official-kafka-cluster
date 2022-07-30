@@ -29,7 +29,7 @@ resource "kubernetes_secret" "lag_exporter_config" {
   data = {
     "application.conf" = templatefile(
       "${path.module}/templates/application.conf", {
-        username         = confluent_api_key.kafka_lag_exporter_api_key[0].key
+        username         = confluent_api_key.kafka_lag_exporter_api_key[0].id
         password         = confluent_api_key.kafka_lag_exporter_api_key[0].secret
         namespace        = var.metric_exporters_namespace
         bootstrapBrokers = local.bootstrap_servers[0]
@@ -228,7 +228,7 @@ resource "confluent_kafka_acl" "kafka_lag_exporter_describe_consumer_group" {
   resource_type = "GROUP"
   resource_name = "*"
   pattern_type  = "LITERAL"
-  principal     = "User:${confluentcloud_service_account.kafka_lag_exporter[0].id}"
+  principal     = "User:${confluent_service_account.kafka_lag_exporter[0].id}"
   host          = "*"
   operation     = "DESCRIBE"
   permission    = "ALLOW"
