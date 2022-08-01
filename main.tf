@@ -4,6 +4,14 @@ terraform {
       source  = "confluentinc/confluent"
       version = ">=1.0.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2"
+    }
+    grafana = {
+      source  = "grafana/grafana"
+      version = ">= 1.14.0"
+    }
   }
 }
 
@@ -36,15 +44,7 @@ locals {
 
 resource "random_pet" "pet" {}
 
-
-# Cloud Environment(use existing or create new one)
-data "confluent_environment" "environment" {
-  count = var.use_existing_environment ? 1 : 0
-  id    = var.environment_id
-}
-
 resource "confluent_environment" "environment" {
-  count        = var.use_existing_environment ? 0 : 1
   display_name = local.name
 }
 
@@ -77,7 +77,7 @@ resource "confluent_api_key" "admin_api_key" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      id = var.use_existing_environment ? data.confluent_environment.environment[0].id : confluent_environment.environment[0].id
+      id = confluent_environment.environment.id
     }
   }
   depends_on = [
@@ -117,7 +117,7 @@ resource "confluent_api_key" "service_account_api_keys" {
     kind        = confluent_kafka_cluster.cluster.kind
 
     environment {
-      id = var.use_existing_environment ? data.confluent_environment.environment[0].id : confluent_environment.environment[0].id
+      id = confluent_environment.environment.id
     }
   }
   depends_on = [
@@ -133,24 +133,24 @@ resource "confluent_kafka_cluster" "cluster" {
   region       = var.gcp_region
 
   dynamic "basic" {
-    for_each = var.cluster_type == "basic" ? [1] : []
+    for_each = lower(var.cluster_tier) == "basic" ? [1] : []
     content {}
   }
 
   dynamic "standard" {
-    for_each = var.cluster_type == "standard" ? [1] : []
+    for_each = lower(var.cluster_tier) == "standard" ? [1] : []
     content {}
   }
 
   dynamic "dedicated" {
-    for_each = var.cluster_type == "dedicated" ? [1] : []
+    for_each = lower(var.cluster_tier) == "dedicated" ? [1] : []
     content {
       cku = var.cku
     }
   }
 
   environment {
-    id = var.use_existing_environment ? data.confluent_environment.environment[0].id : confluent_environment.environment[0].id
+    id = confluent_environment.environment.id
   }
 }
 

@@ -45,7 +45,7 @@ variable "service_provider" {
 variable "availability" {
   description = "Cluster availability. SINGLE_ZONE or MULTI_ZONE"
   type        = string
-  default     = "SINGLE_ZONE"
+  default     = "MULTI_ZONE"
 }
 
 variable "cku" {
@@ -54,19 +54,63 @@ variable "cku" {
   default     = 2
 }
 
-variable "use_existing_environment" {
-  description = "Use existing confluent cloud environment or not"
+variable "cluster_tier" {
+  type        = string
+  description = "type of cluster to provision: basic, standard or dedicated"
+}
+
+variable "enable_metric_exporters" {
+  description = "Whether to deploy kafka-lag-exporter and ccloud-exporter in a kubernetes cluster"
   type        = bool
   default     = false
 }
 
-variable "environment_id" {
+variable "metric_exporters_namespace" {
+  description = "Namespace to deploy exporters to"
   type        = string
-  description = "environment id to fetch existing confluent environment"
-  default     = "env-op92o"
+  default     = "sre"
 }
 
-variable "cluster_type" {
+variable "kafka_lag_exporter_annotations" {
+  description = "Lag exporter annotations"
+  type        = map(string)
+  default     = {}
+}
+
+variable "kafka_lag_exporter_image_version" {
+  description = "See https://github.com/seglo/kafka-lag-exporter/releases"
   type        = string
-  description = "type of cluster to provision: basic, standard or dedicated"
+}
+
+variable "kafka_lag_exporter_container_resources" {
+  description = "Container resource limit configuration"
+  type        = map(map(string))
+  default = {
+    requests = {
+      cpu    = "250m"
+      memory = "1Gi"
+    }
+    limits = {
+      cpu    = "500m"
+      memory = "2Gi"
+    }
+  }
+}
+
+variable "create_grafana_dashboards" {
+  description = "Whether to create grafana dashboards with default metric exporter panels"
+  type        = bool
+  default     = false
+}
+
+variable "grafana_datasource" {
+  description = "Name of Grafana data source where Kafka metrics are stored"
+  type        = string
+  default     = null
+}
+
+variable "exporters_node_selector" {
+  description = "K8S Deployment node selector for metric exporters"
+  type        = map(string)
+  default     = null
 }

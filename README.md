@@ -20,12 +20,8 @@ module "confluent-kafka-cluster" {
   # OPTIONAL: Only needed when creating dedicated cluster, if not provided defaults to 2
   cku                      = 2
 
-  # OPTIONAL: only needed if using existing environment, you need to provide
-  # environment id or it uses the default environment
-  use_existing_environment = true
-
   # you must provide one of: basic, standard or dedicated
-  cluster_type             = "dedicated"
+  cluster_tier             = "DEDICATED"
 
   # Note Basic Cluster cannot have MULTI_ZONE availability just SINGLE_ZONE
   availability             = "MULTI_ZONE"
@@ -64,5 +60,4 @@ module "confluent-kafka-cluster" {
 | environment                                                                                                                                                                                                                         | Application environment that uses the cluster                                                                                                       | string |      |    x     |
 | gcp_region                                                                                                                                                                                                                           | GCP region in which to deploy the cluster. See https://docs.confluent.io/cloud/current/clusters/regions.html      | string |      |    x     |
 | availability                                                                                                                                                                                                                            | Cluster availability. SINGLE_ZONE or MULTI_ZONE                                                                                                  | string | MULTI_ZONE     |          |
-| use_existing_environment                                                                                                                                                                                                    | use_existing_environment. true or false                                                                                                                 | bool | false |          |
 | service_provider                                                                                                                                                                                                                   | Confluent cloud service provider. AWS, GCP, Azure                                                                                                | string | GCP  |          |                                                                                                                                                                                                                   | Grafana datasource to use in dashboards                                                                      | string |         |   null   |
