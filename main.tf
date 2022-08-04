@@ -193,7 +193,7 @@ resource "confluent_kafka_acl" "readers" {
 
 # Topic Writers ACL
 resource "confluent_kafka_acl" "writers" {
-  for_each = local.readers_map
+  for_each = local.writers_map
 
   kafka_cluster {
     id = confluent_kafka_cluster.cluster.id
