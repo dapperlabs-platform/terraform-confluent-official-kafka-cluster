@@ -18,3 +18,7 @@ output "admin_api_key" {
   value       = confluent_api_key.admin_api_key
   sensitive   = true
 }
+
+output "rest_endpoint" {
+  value = confluent_kafka_cluster.cluster.rest_endpoint
+}
