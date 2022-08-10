@@ -23,7 +23,7 @@ variable "topics" {
     object({
       replication_factor = number
       partitions         = number
-      config             = object({})
+      config             = map(any)
       acl_readers        = list(string)
       acl_writers        = list(string)
     })
