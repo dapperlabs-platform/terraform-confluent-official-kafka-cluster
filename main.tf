@@ -163,7 +163,7 @@ resource "confluent_kafka_topic" "topics" {
   topic_name       = each.key
   partitions_count = each.value.partitions
   rest_endpoint    = confluent_kafka_cluster.cluster.rest_endpoint
-  config           = each.value.config
+  config           = try(each.value.config, {})
   credentials {
     key    = confluent_api_key.admin_api_key.id
     secret = confluent_api_key.admin_api_key.secret
