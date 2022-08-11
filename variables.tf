@@ -115,7 +115,7 @@ variable "exporters_node_selector" {
   default     = null
 }
 
-variable "accounts" {
+variable "extra_accounts" {
   description = <<EOF
   Kafka account definitions.
   Object map keyed by topic name with topic configuration values as well as reader and writer ACL lists.

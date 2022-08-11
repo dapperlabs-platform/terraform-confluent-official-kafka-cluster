@@ -37,7 +37,8 @@ locals {
   service_accounts = distinct(
     concat(
       [for v in local.readers_map : v.user],
-      [for v in local.writers_map : v.user]
+      [for v in local.writers_map : v.user],
+      keys(var.extra_accounts)
     )
   )
 }
@@ -232,10 +233,12 @@ resource "confluent_kafka_acl" "group_readers" {
     secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
-
+/*
+ New realisation of ACL
+*/
 //Account Readers ACL
-resource "confluent_kafka_acl" "accounts_readers" {
-  for_each = var.accounts
+resource "confluent_kafka_acl" "extra_accounts_readers" {
+  for_each = var.extra_accounts
 
   kafka_cluster {
     id = confluent_kafka_cluster.cluster.id
@@ -255,8 +258,8 @@ resource "confluent_kafka_acl" "accounts_readers" {
 }
 
 //Account Writers ACL
-resource "confluent_kafka_acl" "accounts_writers" {
-  for_each = var.accounts
+resource "confluent_kafka_acl" "extra_accounts_writers" {
+  for_each = var.extra_accounts
 
   kafka_cluster {
     id = confluent_kafka_cluster.cluster.id
@@ -274,3 +277,25 @@ resource "confluent_kafka_acl" "accounts_writers" {
     secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
+
+# Group Readers ACL
+resource "confluent_kafka_acl" "extra_accounts_group_readers" {
+  for_each = var.extra_accounts
+
+  kafka_cluster {
+    id = confluent_kafka_cluster.cluster.id
+  }
+  resource_type = "GROUP"
+  resource_name = each.value.acl_read
+  pattern_type  = "LITERAL"
+  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
+  host          = "*"
+  operation     = "READ"
+  permission    = "ALLOW"
+  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
+  credentials {
+    key    = confluent_api_key.service_account_api_keys[each.value].id
+    secret = confluent_api_key.service_account_api_keys[each.value].secret
+  }
+}
+
