@@ -232,3 +232,45 @@ resource "confluent_kafka_acl" "group_readers" {
     secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
+
+//Account Readers ACL
+resource "confluent_kafka_acl" "accounts_readers" {
+  for_each = var.accounts
+
+  kafka_cluster {
+    id = confluent_kafka_cluster.cluster.id
+  }
+
+  resource_type = "TOPIC"
+  resource_name = each.value.acl_read
+  pattern_type  = "LITERAL"
+  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
+  host          = "*"
+  operation     = "READ"
+  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
+  credentials {
+    key    = confluent_api_key.service_account_api_keys[each.value].id
+    secret = confluent_api_key.service_account_api_keys[each.value].secret
+  }
+}
+
+//Account Writers ACL
+resource "confluent_kafka_acl" "accounts_writers" {
+  for_each = var.accounts
+
+  kafka_cluster {
+    id = confluent_kafka_cluster.cluster.id
+  }
+
+  resource_type = "TOPIC"
+  resource_name = each.value.acl_write
+  pattern_type  = "LITERAL"
+  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
+  host          = "*"
+  operation     = "WRITE"
+  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
+  credentials {
+    key    = confluent_api_key.service_account_api_keys[each.value].id
+    secret = confluent_api_key.service_account_api_keys[each.value].secret
+  }
+}
