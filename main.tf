@@ -286,7 +286,7 @@ resource "confluent_kafka_acl" "extra_accounts_group_readers" {
     id = confluent_kafka_cluster.cluster.id
   }
   resource_type = "GROUP"
-  resource_name = each.value.acl_read
+  resource_name = "*"
   pattern_type  = "LITERAL"
   principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
   host          = "*"
