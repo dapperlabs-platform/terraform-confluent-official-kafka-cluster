@@ -242,6 +242,7 @@ resource "confluent_kafka_acl" "extra_accounts_readers" {
   principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
   host          = "*"
   operation     = "READ"
+  permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.admin_api_key.id
@@ -263,6 +264,7 @@ resource "confluent_kafka_acl" "extra_accounts_writers" {
   principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
   host          = "*"
   operation     = "WRITE"
+  permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
     key    = confluent_api_key.admin_api_key.id
