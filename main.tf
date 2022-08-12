@@ -113,9 +113,6 @@ resource "confluent_api_key" "service_account_api_keys" {
       id = confluent_environment.environment.id
     }
   }
-  depends_on = [
-    confluent_role_binding.service_accounts_cluster_role_binding
-  ]
 }
 
 # Cluster

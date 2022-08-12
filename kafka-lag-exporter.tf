@@ -171,9 +171,6 @@ resource "confluent_api_key" "kafka_lag_exporter_api_key" {
       id = confluent_environment.environment.id
     }
   }
-  depends_on = [
-    confluent_role_binding.service_accounts_cluster_role_binding
-  ]
 }
 
 # Topic Readers ACL
