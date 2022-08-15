@@ -253,8 +253,8 @@ resource "confluent_kafka_acl" "extra_accounts_readers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
+    key    = confluent_api_key.admin_api_key.id
+    secret = confluent_api_key.admin_api_key.secret
   }
 }
 
@@ -275,8 +275,8 @@ resource "confluent_kafka_acl" "extra_accounts_writers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
+    key    = confluent_api_key.admin_api_key.id
+    secret = confluent_api_key.admin_api_key.secret
   }
 }
 
@@ -296,8 +296,8 @@ resource "confluent_kafka_acl" "extra_accounts_group_readers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
+    key    = confluent_api_key.admin_api_key.id
+    secret = confluent_api_key.admin_api_key.secret
   }
 }
 
