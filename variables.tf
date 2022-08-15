@@ -127,4 +127,5 @@ variable "extra_accounts" {
       acl_write = string
     })
   )
+  default = {}
 }
