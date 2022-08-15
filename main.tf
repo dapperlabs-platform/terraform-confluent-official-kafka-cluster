@@ -125,6 +125,14 @@ resource "confluent_api_key" "service_account_api_keys" {
   ]
 }
 
+# Ccloud Exporter API Key
+resource "confluent_api_key" "ccloud_exporter_api_key" {
+  count = var.enable_metric_exporters ? 1 : 0
+
+  environment_id =  confluent_environment.environment.id
+  description    = "${local.name} ccloud exporter api key"
+}
+
 # Cluster
 resource "confluent_kafka_cluster" "cluster" {
   display_name = local.name

@@ -114,3 +114,15 @@ variable "exporters_node_selector" {
   type        = map(string)
   default     = null
 }
+
+variable "ccloud_exporter_image_version" {
+  description = "Exporter Image Version"
+  type = string
+}
+
+variable "ccloud_exporter_container_resources" {
+  type = object({
+    requests = string
+    limits = string
+  })
+}

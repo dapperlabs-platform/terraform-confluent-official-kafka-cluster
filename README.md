@@ -25,6 +25,12 @@ module "confluent-kafka-cluster" {
 
   # Note Basic Cluster cannot have MULTI_ZONE availability just SINGLE_ZONE
   availability             = "MULTI_ZONE"
+
+  ccloud_exporter_image_version = ""
+  ccloud_exporter_container_resources = {
+    requests = "200"
+    limits = "200"
+  }
   
   topics = {
     "topic-1" = {
