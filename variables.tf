@@ -116,11 +116,7 @@ variable "exporters_node_selector" {
 }
 
 variable "extra_accounts" {
-  description = <<EOF
-  Kafka account definitions.
-  Object map keyed by topic name with topic configuration values as well as reader and writer ACL lists.
-  Values provided to the ACL lists will become service accounts with { key, secret } objects output by service_account_credentials
-  EOF
+  description = "Kafka account definitions."
   type = map(
     object({
       acl_read  = string
