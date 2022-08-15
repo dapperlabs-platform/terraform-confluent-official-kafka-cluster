@@ -121,8 +121,16 @@ variable "ccloud_exporter_image_version" {
 }
 
 variable "ccloud_exporter_container_resources" {
-  type = object({
-    requests = string
-    limits = string
-  })
+  description = "Container resource limit configuration"
+  type        = map(map(string))
+  default = {
+    requests = {
+      cpu    = "250m"
+      memory = "1Gi"
+    }
+    limits = {
+      cpu    = "500m"
+      memory = "2Gi"
+    }
+  }
 }
