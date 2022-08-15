@@ -129,8 +129,26 @@ resource "confluent_api_key" "service_account_api_keys" {
 resource "confluent_api_key" "ccloud_exporter_api_key" {
   count = var.enable_metric_exporters ? 1 : 0
 
-  environment_id =  confluent_environment.environment.id
-  description    = "${local.name} ccloud exporter api key"
+  display_name = "${local.name} ccloud exporter api key"
+  description  = "${local.name} ccloud exporter api key"
+  owner {
+    id          = confluent_service_account.admin_service_account.id
+    api_version = confluent_service_account.admin_service_account.api_version
+    kind        = confluent_service_account.admin_service_account.kind
+  }
+
+  managed_resource {
+    id          = confluent_kafka_cluster.cluster.id
+    api_version = confluent_kafka_cluster.cluster.api_version
+    kind        = confluent_kafka_cluster.cluster.kind
+
+    environment {
+      id = confluent_environment.environment.id
+    }
+  }
+  depends_on = [
+    confluent_role_binding.admin_sa_cluster_role_binding
+  ]
 }
 
 # Cluster

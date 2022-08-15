@@ -117,7 +117,7 @@ variable "exporters_node_selector" {
 
 variable "ccloud_exporter_image_version" {
   description = "Exporter Image Version"
-  type = string
+  type        = string
 }
 
 variable "ccloud_exporter_container_resources" {
