@@ -232,26 +232,3 @@ resource "confluent_kafka_acl" "group_readers" {
     secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
-/*
- New realisation of ACL
-*/
-//Account Readers ACL
-resource "confluent_kafka_acl" "extra_accounts_readers" {
-  for_each = var.extra_accounts
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-
-  resource_type = "TOPIC"
-  resource_name = each.value.acl_read
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
-  host          = "*"
-  operation     = "READ"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
-  }
-}
