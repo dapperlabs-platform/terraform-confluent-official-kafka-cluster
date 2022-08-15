@@ -34,6 +34,12 @@ locals {
   bootstrap_servers = [
     replace(confluent_kafka_cluster.cluster.bootstrap_endpoint, "SASL_SSL://", "")
   ]
+  service_accounts = distinct(
+    concat(
+      [for v in local.readers_map : v.user],
+      [for v in local.writers_map : v.user]
+    )
+  )
 }
 
 resource "random_pet" "pet" {}
