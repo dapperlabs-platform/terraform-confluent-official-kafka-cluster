@@ -233,6 +233,7 @@ resource "confluent_kafka_acl" "group_readers" {
     secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
+
 /*
  New realisation of ACL
 */
