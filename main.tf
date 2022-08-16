@@ -92,14 +92,6 @@ resource "confluent_service_account" "service_accounts" {
   description  = "${each.value} service account"
 }
 
-# Service Account Role Bindings
-resource "confluent_role_binding" "service_accounts_cluster_role_binding" {
-  for_each    = toset(local.service_accounts)
-  principal   = "User:${confluent_service_account.service_accounts[each.value].id}"
-  role_name   = "CloudClusterAdmin"
-  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
-}
-
 # Service Accounts API Keys
 resource "confluent_api_key" "service_account_api_keys" {
   for_each     = toset(local.service_accounts)
@@ -120,11 +112,7 @@ resource "confluent_api_key" "service_account_api_keys" {
       id = confluent_environment.environment.id
     }
   }
-  depends_on = [
-    confluent_role_binding.service_accounts_cluster_role_binding
-  ]
 }
-
 
 # Ccloud Exporter Service Account
 resource "confluent_service_account" "ccloud_exporter_service_account" {
