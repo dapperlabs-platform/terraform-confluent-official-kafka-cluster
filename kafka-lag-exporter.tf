@@ -172,7 +172,7 @@ resource "confluent_api_key" "kafka_lag_exporter_api_key" {
     }
   }
   depends_on = [
-    confluent_role_binding.service_accounts_cluster_role_binding
+    confluent_role_binding.kafka_lag_exporter_cluster_role_binding
   ]
 }
 
