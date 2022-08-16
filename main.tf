@@ -126,6 +126,7 @@ resource "confluent_role_binding" "ccloud_exporter_sa_cluster_role_binding" {
   role_name   = "MetricsViewer"
   crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
 }
+
 # Ccloud Exporter API Key
 resource "confluent_api_key" "ccloud_exporter_api_key" {
   count = var.enable_metric_exporters ? 1 : 0
@@ -138,15 +139,6 @@ resource "confluent_api_key" "ccloud_exporter_api_key" {
     kind        = confluent_service_account.ccloud_exporter_service_account.kind
   }
 
-  managed_resource {
-    id          = confluent_kafka_cluster.cluster.id
-    api_version = confluent_kafka_cluster.cluster.api_version
-    kind        = confluent_kafka_cluster.cluster.kind
-
-    environment {
-      id = confluent_environment.environment.id
-    }
-  }
   depends_on = [
     confluent_role_binding.ccloud_exporter_sa_cluster_role_binding
   ]
@@ -259,5 +251,3 @@ resource "confluent_kafka_acl" "group_readers" {
     secret = confluent_api_key.service_account_api_keys[each.value].secret
   }
 }
-
-
