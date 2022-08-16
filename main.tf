@@ -125,6 +125,19 @@ resource "confluent_api_key" "service_account_api_keys" {
   ]
 }
 
+
+# Ccloud Exporter Service Account
+resource "confluent_service_account" "ccloud_exporter_service_account" {
+  display_name = "${local.name}-ccloud-exporter-service-account"
+  description  = "Service Account for Ccloud Exporter"
+}
+
+# Ccloud Exporter Service Account Role Binding
+resource "confluent_role_binding" "ccloud_exporter_sa_cluster_role_binding" {
+  principal   = "User:${confluent_service_account.ccloud_exporter_service_account.id}"
+  role_name   = "MetricsViewer"
+  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
+}
 # Ccloud Exporter API Key
 resource "confluent_api_key" "ccloud_exporter_api_key" {
   count = var.enable_metric_exporters ? 1 : 0
@@ -132,9 +145,9 @@ resource "confluent_api_key" "ccloud_exporter_api_key" {
   display_name = "${local.name} ccloud exporter api key"
   description  = "${local.name} ccloud exporter api key"
   owner {
-    id          = confluent_service_account.admin_service_account.id
-    api_version = confluent_service_account.admin_service_account.api_version
-    kind        = confluent_service_account.admin_service_account.kind
+    id          = confluent_service_account.ccloud_exporter_service_account.id
+    api_version = confluent_service_account.ccloud_exporter_service_account.api_version
+    kind        = confluent_service_account.ccloud_exporter_service_account.kind
   }
 
   managed_resource {
@@ -147,7 +160,7 @@ resource "confluent_api_key" "ccloud_exporter_api_key" {
     }
   }
   depends_on = [
-    confluent_role_binding.admin_sa_cluster_role_binding
+    confluent_role_binding.ccloud_exporter_sa_cluster_role_binding
   ]
 }
 
