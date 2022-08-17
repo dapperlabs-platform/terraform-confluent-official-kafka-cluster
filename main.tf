@@ -37,8 +37,7 @@ locals {
   service_accounts = distinct(
     concat(
       [for v in local.readers_map : v.user],
-      [for v in local.writers_map : v.user],
-      keys(var.extra_accounts)
+      [for v in local.writers_map : v.user]
     )
   )
 }
@@ -93,14 +92,6 @@ resource "confluent_service_account" "service_accounts" {
   description  = "${each.value} service account"
 }
 
-# Service Account Role Bindings
-resource "confluent_role_binding" "service_accounts_cluster_role_binding" {
-  for_each    = toset(local.service_accounts)
-  principal   = "User:${confluent_service_account.service_accounts[each.value].id}"
-  role_name   = "CloudClusterAdmin"
-  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
-}
-
 # Service Accounts API Keys
 resource "confluent_api_key" "service_account_api_keys" {
   for_each     = toset(local.service_accounts)
@@ -121,8 +112,35 @@ resource "confluent_api_key" "service_account_api_keys" {
       id = confluent_environment.environment.id
     }
   }
+}
+
+# Ccloud Exporter Service Account
+resource "confluent_service_account" "ccloud_exporter_service_account" {
+  display_name = "${local.name}-ccloud-exporter-service-account"
+  description  = "Service Account for Ccloud Exporter"
+}
+
+# Ccloud Exporter Service Account Role Binding
+resource "confluent_role_binding" "ccloud_exporter_sa_cluster_role_binding" {
+  principal   = "User:${confluent_service_account.ccloud_exporter_service_account.id}"
+  role_name   = "MetricsViewer"
+  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
+}
+
+# Ccloud Exporter API Key
+resource "confluent_api_key" "ccloud_exporter_api_key" {
+  count = var.enable_metric_exporters ? 1 : 0
+
+  display_name = "${local.name} ccloud exporter api key"
+  description  = "${local.name} ccloud exporter api key"
+  owner {
+    id          = confluent_service_account.ccloud_exporter_service_account.id
+    api_version = confluent_service_account.ccloud_exporter_service_account.api_version
+    kind        = confluent_service_account.ccloud_exporter_service_account.kind
+  }
+
   depends_on = [
-    confluent_role_binding.service_accounts_cluster_role_binding
+    confluent_role_binding.ccloud_exporter_sa_cluster_role_binding
   ]
 }
 
@@ -179,7 +197,7 @@ resource "confluent_kafka_acl" "readers" {
     id = confluent_kafka_cluster.cluster.id
   }
   resource_type = "TOPIC"
-  resource_name = "*"
+  resource_name = each.value.topic
   pattern_type  = "LITERAL"
   principal     = "User:${confluent_service_account.service_accounts[each.value.user].id}"
   host          = "*"
@@ -187,8 +205,8 @@ resource "confluent_kafka_acl" "readers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value.user].id
-    secret = confluent_api_key.service_account_api_keys[each.value.user].secret
+    key    = confluent_api_key.admin_api_key.id
+    secret = confluent_api_key.admin_api_key.secret
   }
 }
 
@@ -200,7 +218,7 @@ resource "confluent_kafka_acl" "writers" {
     id = confluent_kafka_cluster.cluster.id
   }
   resource_type = "TOPIC"
-  resource_name = "*"
+  resource_name = each.value.topic
   pattern_type  = "LITERAL"
   principal     = "User:${confluent_service_account.service_accounts[each.value.user].id}"
   host          = "*"
@@ -208,8 +226,8 @@ resource "confluent_kafka_acl" "writers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value.user].id
-    secret = confluent_api_key.service_account_api_keys[each.value.user].secret
+    key    = confluent_api_key.admin_api_key.id
+    secret = confluent_api_key.admin_api_key.secret
   }
 }
 
@@ -229,73 +247,7 @@ resource "confluent_kafka_acl" "group_readers" {
   permission    = "ALLOW"
   rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
   credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
+    key    = confluent_api_key.admin_api_key.id
+    secret = confluent_api_key.admin_api_key.secret
   }
 }
-/*
- New realisation of ACL
-*/
-//Account Readers ACL
-resource "confluent_kafka_acl" "extra_accounts_readers" {
-  for_each = var.extra_accounts
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-
-  resource_type = "TOPIC"
-  resource_name = each.value.acl_read
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
-  host          = "*"
-  operation     = "READ"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
-  }
-}
-
-//Account Writers ACL
-resource "confluent_kafka_acl" "extra_accounts_writers" {
-  for_each = var.extra_accounts
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-
-  resource_type = "TOPIC"
-  resource_name = each.value.acl_write
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
-  host          = "*"
-  operation     = "WRITE"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
-  }
-}
-
-# Group Readers ACL
-resource "confluent_kafka_acl" "extra_accounts_group_readers" {
-  for_each = var.extra_accounts
-
-  kafka_cluster {
-    id = confluent_kafka_cluster.cluster.id
-  }
-  resource_type = "GROUP"
-  resource_name = each.value.acl_read
-  pattern_type  = "LITERAL"
-  principal     = "User:${confluent_service_account.service_accounts[each.key].id}"
-  host          = "*"
-  operation     = "READ"
-  permission    = "ALLOW"
-  rest_endpoint = confluent_kafka_cluster.cluster.rest_endpoint
-  credentials {
-    key    = confluent_api_key.service_account_api_keys[each.value].id
-    secret = confluent_api_key.service_account_api_keys[each.value].secret
-  }
-}
-

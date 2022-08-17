@@ -23,7 +23,7 @@ variable "topics" {
     object({
       replication_factor = number
       partitions         = number
-      config             = object({})
+      config             = map(any)
       acl_readers        = list(string)
       acl_writers        = list(string)
     })
@@ -115,16 +115,22 @@ variable "exporters_node_selector" {
   default     = null
 }
 
-variable "extra_accounts" {
-  description = <<EOF
-  Kafka account definitions.
-  Object map keyed by topic name with topic configuration values as well as reader and writer ACL lists.
-  Values provided to the ACL lists will become service accounts with { key, secret } objects output by service_account_credentials
-  EOF
-  type = map(
-    object({
-      acl_read  = string
-      acl_write = string
-    })
-  )
+variable "ccloud_exporter_image_version" {
+  description = "Exporter Image Version"
+  type        = string
+}
+
+variable "ccloud_exporter_container_resources" {
+  description = "Container resource limit configuration"
+  type        = map(map(string))
+  default = {
+    requests = {
+      cpu    = "250m"
+      memory = "1Gi"
+    }
+    limits = {
+      cpu    = "500m"
+      memory = "2Gi"
+    }
+  }
 }

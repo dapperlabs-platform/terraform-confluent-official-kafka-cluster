@@ -27,9 +27,9 @@ resource "kubernetes_secret" "ccloud_exporter_config" {
   }
 
   data = {
-    CCLOUD_API_KEY    = confluentcloud_api_key.ccloud_exporter_api_key[0].key
-    CCLOUD_API_SECRET = confluentcloud_api_key.ccloud_exporter_api_key[0].secret
-    CCLOUD_CLUSTER    = confluentcloud_kafka_cluster.cluster.id
+    CCLOUD_API_KEY    = confluent_api_key.ccloud_exporter_api_key[0].id
+    CCLOUD_API_SECRET = confluent_api_key.ccloud_exporter_api_key[0].secret
+    CCLOUD_CLUSTER    = confluent_kafka_cluster.cluster.id
   }
 }
 
