@@ -124,7 +124,7 @@ resource "confluent_service_account" "ccloud_exporter_service_account" {
 resource "confluent_role_binding" "ccloud_exporter_sa_cluster_role_binding" {
   principal   = "User:${confluent_service_account.ccloud_exporter_service_account.id}"
   role_name   = "MetricsViewer"
-  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
+  crn_pattern = confluent_environment.environment.resource_name
 }
 
 # Ccloud Exporter API Key
