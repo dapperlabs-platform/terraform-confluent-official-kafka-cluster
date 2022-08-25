@@ -93,7 +93,7 @@ resource "kubernetes_deployment" "ccloud_exporter_deployment" {
           # Repo recommends pointing to master
           image_pull_policy = "Always"
 
-          command = ["-config", "/opt/docker/conf/config.yaml"]
+          args = ["-config", "/opt/docker/conf/config.yaml"]
 
           resources {
             requests = var.ccloud_exporter_container_resources.requests
