@@ -28,7 +28,12 @@ resource "kubernetes_secret" "ccloud_exporter_config_file" {
   }
 
   data = {
-    "config.yaml" = file("${path.module}/templates/ccloud-exporter.yaml")
+    "config.yaml" = templatefile(
+      "${path.module}/templates/ccloud-exporter.yaml",
+      {
+        cluster_id = confluent_kafka_cluster.cluster.id
+      }
+    )
   }
 }
 
@@ -44,7 +49,6 @@ resource "kubernetes_secret" "ccloud_exporter_config" {
   data = {
     CCLOUD_API_KEY    = confluent_api_key.ccloud_exporter_api_key[0].id
     CCLOUD_API_SECRET = confluent_api_key.ccloud_exporter_api_key[0].secret
-    CCLOUD_CLUSTER    = confluent_kafka_cluster.cluster.id
   }
 }
 

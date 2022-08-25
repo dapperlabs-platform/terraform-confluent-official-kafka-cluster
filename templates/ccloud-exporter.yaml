@@ -6,16 +6,13 @@ config:
   noTimestamp: false
   delay: 60
   granularity: PT1M
-  cachedSecond: 30
+  cachedSecond: 60
 rules:
   - clusters:
-      - $CCLOUD_CLUSTER
-    connectors:
-      - $CCLOUD_CONNECTOR
-    ksqls:
-      - $CCLOUD_KSQL
-    schemaRegistries:
-      - $CCLOUD_SCHEMA_REGISTRY
+      - ${cluster_id}
+    connectors: []
+    ksqls: []
+    schemaRegistries: []
     metrics:
       - io.confluent.kafka.server/received_bytes
       - io.confluent.kafka.server/sent_bytes
@@ -31,14 +28,9 @@ rules:
       - io.confluent.kafka.server/cluster_link_mirror_topic_offset_lag
       - io.confluent.kafka.server/cluster_link_mirror_topic_bytes
       - io.confluent.kafka.server/cluster_load_percent
-      - io.confluent.kafka.connect/sent_bytes
-      - io.confluent.kafka.connect/received_bytes
-      - io.confluent.kafka.connect/received_records
-      - io.confluent.kafka.connect/sent_records
-      - io.confluent.kafka.connect/dead_letter_queue_records
-      - io.confluent.kafka.ksql/streaming_unit_count
-      - io.confluent.kafka.schema_registry/schema_count
     labels:
       - kafka_id
       - topic
       - type
+      - link_name
+      - link_mirror_topic_state
