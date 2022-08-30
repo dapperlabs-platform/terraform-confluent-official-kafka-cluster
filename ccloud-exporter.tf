@@ -120,7 +120,7 @@ resource "kubernetes_deployment" "ccloud_exporter_deployment" {
 
           readiness_probe {
             http_get {
-              path = "/metrics"
+              path = "/health"
               port = "http"
             }
 
@@ -133,7 +133,7 @@ resource "kubernetes_deployment" "ccloud_exporter_deployment" {
 
           liveness_probe {
             http_get {
-              path = "/metrics"
+              path = "/health"
               port = "http"
             }
 
