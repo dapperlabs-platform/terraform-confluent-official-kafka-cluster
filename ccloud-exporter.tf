@@ -67,6 +67,12 @@ resource "kubernetes_deployment" "ccloud_exporter_deployment" {
   spec {
     replicas = 1
 
+    # Kill all existing Pods before creating new ones
+    # to avoid possible rate limiting
+    strategy {
+      type = "Recreate"
+    }
+
     selector {
       match_labels = local.ccloud_exporter_common_labels
     }
