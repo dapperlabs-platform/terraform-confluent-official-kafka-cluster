@@ -80,6 +80,7 @@ variable "kafka_lag_exporter_annotations" {
 variable "kafka_lag_exporter_image_version" {
   description = "See https://github.com/seglo/kafka-lag-exporter/releases"
   type        = string
+  default     = "0.7.1"
 }
 
 variable "kafka_lag_exporter_container_resources" {
@@ -118,6 +119,7 @@ variable "exporters_node_selector" {
 variable "ccloud_exporter_image_version" {
   description = "Exporter Image Version"
   type        = string
+  default     = "latest"
 }
 
 variable "ccloud_exporter_container_resources" {
