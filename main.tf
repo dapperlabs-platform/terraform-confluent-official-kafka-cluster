@@ -124,7 +124,7 @@ resource "confluent_service_account" "ccloud_exporter_service_account" {
 # Ccloud Exporter Service Account Role Binding
 resource "confluent_role_binding" "ccloud_exporter_sa_cluster_role_binding" {
   count = var.enable_metric_exporters ? 1 : 0
-  principal   = "User:${confluent_service_account.ccloud_exporter_service_account.id}"
+  principal   = "User:${confluent_service_account.ccloud_exporter_service_account[count.index].id}"
   role_name   = "MetricsViewer"
   crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
 }

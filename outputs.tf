@@ -18,3 +18,16 @@ output "admin_api_key" {
   value       = confluent_api_key.admin_api_key
   sensitive   = true
 }
+
+
+output "cluster_id" {
+  description = "The confluent kafka cluster id"
+  value       = confluent_kafka_cluster.cluster.id
+  sensitive   = true
+}
+
+output "confluent_environment" {
+  description = "The confluent environment id"
+  value       = confluent_environment.environment.id
+  sensitive   = true
+}
