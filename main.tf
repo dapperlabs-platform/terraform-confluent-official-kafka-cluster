@@ -136,9 +136,9 @@ resource "confluent_api_key" "ccloud_exporter_api_key" {
   display_name = "${local.name} ccloud exporter api key"
   description  = "${local.name} ccloud exporter api key"
   owner {
-    id          = confluent_service_account.ccloud_exporter_service_account.id
-    api_version = confluent_service_account.ccloud_exporter_service_account.api_version
-    kind        = confluent_service_account.ccloud_exporter_service_account.kind
+    id          = confluent_service_account.ccloud_exporter_service_account[count.index].id
+    api_version = confluent_service_account.ccloud_exporter_service_account[count.index].api_version
+    kind        = confluent_service_account.ccloud_exporter_service_account[count.index].kind
   }
 
   depends_on = [
