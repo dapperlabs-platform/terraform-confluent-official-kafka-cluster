@@ -46,6 +46,16 @@ locals {
       keys(var.cluster_user_roles),
     )
   )
+  cluster_user_roles_list = flatten([
+    for user, roles in var.cluster_user_roles : [
+      for role in roles : { "user" : user, "role" : role }
+    ]
+  ])
+  environment_user_roles_list = flatten([
+    for user, roles in var.environment_user_roles : [
+      for role in roles : { "user" : user, "role" : role }
+    ]
+  ])
 }
 
 resource "random_pet" "pet" {}
@@ -98,22 +108,14 @@ data "confluent_user" "rbac_users" {
 }
 
 resource "confluent_role_binding" "cluster_role_binding" {
-  for_each = flatten([
-    for user, roles in var.cluster_user_roles : [
-      for role in roles : { "user" : user, "role" : role }
-    ]
-  ])
+  for_each    = { for rb in local.cluster_user_roles_list : "${rb.user}/${rb.role}" => rb }
   principal   = "User:${data.confluent_user.rbac_users[each.value.user].id}"
   role_name   = each.value.role
   crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
 }
 
 resource "confluent_role_binding" "environment_role_binding-example-rb" {
-  for_each = flatten([
-    for user, roles in var.environment_user_roles : [
-      for role in roles : { "user" : user, "role" : role }
-    ]
-  ])
+  for_each    = { for rb in local.environment_user_roles_list : "${rb.user}/${rb.role}" => rb }
   principal   = "User:${data.confluent_user.rbac_users[each.value.user].id}"
   role_name   = each.value.role
   crn_pattern = confluent_environment.environment.resource_name
