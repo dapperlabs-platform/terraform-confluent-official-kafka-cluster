@@ -39,7 +39,7 @@ variable "environment_user_roles" {
     condition = alltrue([for role in flatten(values(var.environment_user_roles)) : contains([
       "EnvironmentAdmin", "Operator", "MetricsViewer"
     ], role)])
-    error_message = "Bad environment role (should be one of \"EnvironmentAdmin\", \"Operator\" or \"MetricsViewer\")"
+    error_message = "Bad environment role (should be one of \"EnvironmentAdmin\", \"Operator\" or \"MetricsViewer\")."
   }
 }
 
@@ -52,7 +52,7 @@ variable "cluster_user_roles" {
     condition = alltrue([for role in flatten(values(var.cluster_user_roles)) : contains([
       "CloudClusterAdmin", "Operator", "MetricsViewer"
     ], role)])
-    error_message = "Bad cluster role (should be one of \"CloudClusterAdmin\", \"Operator\" or \"MetricsViewer\")"
+    error_message = "Bad cluster role (should be one of \"CloudClusterAdmin\", \"Operator\" or \"MetricsViewer\")."
   }
 }
 
