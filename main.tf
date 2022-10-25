@@ -43,7 +43,7 @@ locals {
   rbac_users = distinct(
     concat(
       keys(var.environment_user_roles),
-      keys(var.luster_user_roles),
+      keys(var.cluster_user_roles),
     )
   )
 }
@@ -150,14 +150,14 @@ resource "confluent_api_key" "service_account_api_keys" {
 
 # Ccloud Exporter Service Account
 resource "confluent_service_account" "ccloud_exporter_service_account" {
-  count = var.enable_metric_exporters ? 1 : 0
+  count        = var.enable_metric_exporters ? 1 : 0
   display_name = "${local.name}-ccloud-exporter-service-account"
   description  = "Service Account for Ccloud Exporter"
 }
 
 # Ccloud Exporter Service Account Role Binding
 resource "confluent_role_binding" "ccloud_exporter_sa_cluster_role_binding" {
-  count = var.enable_metric_exporters ? 1 : 0
+  count       = var.enable_metric_exporters ? 1 : 0
   principal   = "User:${confluent_service_account.ccloud_exporter_service_account[count.index].id}"
   role_name   = "MetricsViewer"
   crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
