@@ -30,6 +30,32 @@ variable "topics" {
   )
 }
 
+variable "environment_user_roles" {
+  description = "Map of users with list of roles for Environment-level access"
+  type        = map(list(string))
+  default     = []
+
+  validation {
+    condition = alltrue([for role in flatten(values(var.environment_user_roles)) : contains([
+      "EnvironmentAdmin", "Operator", "MetricsViewer"
+    ], role)])
+    error_message = "Bad environment role (should be one of \"EnvironmentAdmin\", \"Operator\" or \"MetricsViewer\")"
+  }
+}
+
+variable "cluster_user_roles" {
+  description = "Map of users with list of roles for Cluster-level access"
+  type        = map(list(string))
+  default     = []
+
+  validation {
+    condition = alltrue([for role in flatten(values(var.cluster_user_roles)) : contains([
+      "CloudClusterAdmin", "Operator", "MetricsViewer"
+    ], role)])
+    error_message = "Bad cluster role (should be one of \"CloudClusterAdmin\", \"Operator\" or \"MetricsViewer\")"
+  }
+}
+
 variable "add_service_account_suffix" {
   description = "Add pet name suffix to service account names to avoid collision"
   type        = bool

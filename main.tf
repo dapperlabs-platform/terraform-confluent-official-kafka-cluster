@@ -40,6 +40,12 @@ locals {
       [for v in local.writers_map : v.user]
     )
   )
+  rbac_users = distinct(
+    concat(
+      keys(var.environment_user_roles),
+      keys(var.luster_user_roles),
+    )
+  )
 }
 
 resource "random_pet" "pet" {}
@@ -83,6 +89,34 @@ resource "confluent_api_key" "admin_api_key" {
   depends_on = [
     confluent_role_binding.admin_sa_cluster_role_binding
   ]
+}
+
+# Users Role Bindings
+data "confluent_user" "rbac_users" {
+  for_each = local.rbac_users
+  email    = each.value
+}
+
+resource "confluent_role_binding" "cluster_role_binding" {
+  for_each = flatten([
+    for user, roles in var.cluster_user_roles : [
+      for role in roles : { "user" : user, "role" : role }
+    ]
+  ])
+  principal   = "User:${data.confluent_user.rbac_users[each.value.user].id}"
+  role_name   = each.value.role
+  crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
+}
+
+resource "confluent_role_binding" "environment_role_binding-example-rb" {
+  for_each = flatten([
+    for user, roles in var.environment_user_roles : [
+      for role in roles : { "user" : user, "role" : role }
+    ]
+  ])
+  principal   = "User:${data.confluent_user.rbac_users[each.value.user].id}"
+  role_name   = each.value.role
+  crn_pattern = confluent_environment.environment.resource_name
 }
 
 # Service Accounts
