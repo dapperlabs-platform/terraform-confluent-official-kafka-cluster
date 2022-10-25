@@ -33,7 +33,7 @@ variable "topics" {
 variable "environment_user_roles" {
   description = "Map of users with list of roles for Environment-level access"
   type        = map(list(string))
-  default     = []
+  default     = {}
 
   validation {
     condition = alltrue([for role in flatten(values(var.environment_user_roles)) : contains([
@@ -46,7 +46,7 @@ variable "environment_user_roles" {
 variable "cluster_user_roles" {
   description = "Map of users with list of roles for Cluster-level access"
   type        = map(list(string))
-  default     = []
+  default     = {}
 
   validation {
     condition = alltrue([for role in flatten(values(var.cluster_user_roles)) : contains([
