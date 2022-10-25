@@ -93,7 +93,7 @@ resource "confluent_api_key" "admin_api_key" {
 
 # Users Role Bindings
 data "confluent_user" "rbac_users" {
-  for_each = local.rbac_users
+  for_each = toset(local.rbac_users)
   email    = each.value
 }
 
