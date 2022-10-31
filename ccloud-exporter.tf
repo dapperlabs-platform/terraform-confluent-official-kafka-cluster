@@ -3,6 +3,9 @@ locals {
     name       = "ccloud-exporter"
     instance   = "ccloud-exporter"
     managed-by = "Terraform"
+    app = "ccloud-exporter"
+    version = "0.1"
+    env = "staging"
   }
   ccloud_exporter_name = "${local.lc_name}-ccloud-exporter"
 }
