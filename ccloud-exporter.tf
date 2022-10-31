@@ -6,6 +6,7 @@ locals {
     app = "ccloud-exporter"
     version = "0.1"
     env = "staging"
+    owner = "sre"
   }
   ccloud_exporter_name = "${local.lc_name}-ccloud-exporter"
 }
