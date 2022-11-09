@@ -114,7 +114,7 @@ resource "confluent_role_binding" "cluster_role_binding" {
   crn_pattern = confluent_kafka_cluster.cluster.rbac_crn
 }
 
-resource "confluent_role_binding" "environment_role_binding-example-rb" {
+resource "confluent_role_binding" "environment_role_binding" {
   for_each    = { for rb in local.environment_user_roles_list : "${rb.user}/${rb.role}" => rb }
   principal   = "User:${data.confluent_user.rbac_users[each.value.user].id}"
   role_name   = each.value.role
