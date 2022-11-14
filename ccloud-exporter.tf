@@ -3,7 +3,6 @@ locals {
     name       = "ccloud-exporter"
     instance   = "ccloud-exporter"
     managed-by = "Terraform"
-    ops.dapperlabs.com/skip-label-validation: "true"
   }
   ccloud_exporter_name = "${local.lc_name}-ccloud-exporter"
 }
