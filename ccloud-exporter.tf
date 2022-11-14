@@ -62,6 +62,7 @@ resource "kubernetes_deployment" "ccloud_exporter_deployment" {
     name      = local.ccloud_exporter_name
     namespace = var.metric_exporters_namespace
     labels    = local.ccloud_exporter_common_labels
+    annotations = var.kafka_lag_exporter_annotations
   }
 
   spec {
@@ -80,11 +81,14 @@ resource "kubernetes_deployment" "ccloud_exporter_deployment" {
     template {
       metadata {
         labels = local.ccloud_exporter_common_labels
-        annotations = {
+        annotations = merge(
+          {
           "prometheus.io/port"   = "2112"
           "prometheus.io/path"   = "/metrics"
           "prometheus.io/scrape" = "true"
-        }
+        },
+          var.kafka_lag_exporter_annotations,
+        )
       }
 
       spec {
