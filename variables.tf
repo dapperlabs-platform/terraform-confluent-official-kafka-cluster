@@ -77,6 +77,12 @@ variable "kafka_lag_exporter_annotations" {
   default     = {}
 }
 
+variable "ccloud_exporter_annotations" {
+  description = "CCloud exporter annotations"
+  type        = map(string)
+  default     = {}
+}
+
 variable "kafka_lag_exporter_image_version" {
   description = "See https://github.com/seglo/kafka-lag-exporter/releases"
   type        = string
