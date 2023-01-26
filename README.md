@@ -55,7 +55,7 @@ module "confluent-kafka-cluster" {
 | Name | Version |
 |------|---------|
 | <a name="requirement_confluent"></a> [confluent](#requirement\_confluent) | >=1.0.0 |
-| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~= 1.20 |
+| <a name="requirement_grafana"></a> [grafana](#requirement\_grafana) | ~> 1.20 |
 | <a name="requirement_kubernetes"></a> [kubernetes](#requirement\_kubernetes) | >= 2 |
 
 ## Providers
@@ -63,7 +63,7 @@ module "confluent-kafka-cluster" {
 | Name | Version |
 |------|---------|
 | <a name="provider_confluent"></a> [confluent](#provider\_confluent) | >=1.0.0 |
-| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~= 1.20 |
+| <a name="provider_grafana"></a> [grafana](#provider\_grafana) | ~> 1.20 |
 | <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | >= 2 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
