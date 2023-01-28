@@ -150,6 +150,27 @@ resource "confluent_api_key" "service_account_api_keys" {
   }
 }
 
+resource "confluent_api_key" "new_service_account_api_keys" {
+  for_each     = toset(local.service_accounts)
+  display_name = "${local.name}-${each.value}-${random_pet.pet.id}-api-key"
+  description  = "${local.name}-${each.value}-${random_pet.pet.id}-api-key"
+  owner {
+    id          = confluent_service_account.service_accounts[each.value].id
+    api_version = confluent_service_account.service_accounts[each.value].api_version
+    kind        = confluent_service_account.service_accounts[each.value].kind
+  }
+
+  managed_resource {
+    id          = confluent_kafka_cluster.cluster.id
+    api_version = confluent_kafka_cluster.cluster.api_version
+    kind        = confluent_kafka_cluster.cluster.kind
+
+    environment {
+      id = confluent_environment.environment.id
+    }
+  }
+}
+
 # Ccloud Exporter Service Account
 resource "confluent_service_account" "ccloud_exporter_service_account" {
   count        = var.enable_metric_exporters ? 1 : 0
