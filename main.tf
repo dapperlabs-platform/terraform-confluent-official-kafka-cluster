@@ -130,13 +130,16 @@ resource "confluent_service_account" "service_accounts" {
 
 # Service Accounts API Keys
 resource "confluent_api_key" "service_account_api_keys" {
-  for_each     = toset(local.service_accounts)
-  display_name = "${local.name}-${each.value}-${random_pet.pet.id}-api-key"
-  description  = "${local.name}-${each.value}-${random_pet.pet.id}-api-key"
+  # given service_accounts = [reader, writer]
+  # given service_account_key_versions = [v1, v2]
+  # product is ["v1/reader", "v1/writer", "v2/reader", "v2/writer"]
+  for_each     = toset([for v in setproduct(var.service_account_key_versions, local.service_accounts) : join("/", v)])
+  display_name = "${local.name}-${replace(each.value,"/", "-")}-${random_pet.pet.id}-api-key"
+  description  = "${local.name}-${replace(each.value,"/", "-")}-${random_pet.pet.id}-api-key"
   owner {
-    id          = confluent_service_account.service_accounts[each.value].id
-    api_version = confluent_service_account.service_accounts[each.value].api_version
-    kind        = confluent_service_account.service_accounts[each.value].kind
+    id          = confluent_service_account.service_accounts[split("/",each.value)[1]].id
+    api_version = confluent_service_account.service_accounts[split("/",each.value)[1]].api_version
+    kind        = confluent_service_account.service_accounts[split("/",each.value)[1]].kind
   }
 
   managed_resource {
