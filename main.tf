@@ -134,12 +134,12 @@ resource "confluent_api_key" "service_account_api_keys" {
   # given service_account_key_versions = [v1, v2]
   # product is ["v1/reader", "v1/writer", "v2/reader", "v2/writer"]
   for_each     = toset([for v in setproduct(var.service_account_key_versions, local.service_accounts) : join("/", v)])
-  display_name = "${local.name}-${replace(each.value,"/", "-")}-${random_pet.pet.id}-api-key"
-  description  = "${local.name}-${replace(each.value,"/", "-")}-${random_pet.pet.id}-api-key"
+  display_name = "${local.name}-${replace(each.value, "/", "-")}-${random_pet.pet.id}-api-key"
+  description  = "${local.name}-${replace(each.value, "/", "-")}-${random_pet.pet.id}-api-key"
   owner {
-    id          = confluent_service_account.service_accounts[split("/",each.value)[1]].id
-    api_version = confluent_service_account.service_accounts[split("/",each.value)[1]].api_version
-    kind        = confluent_service_account.service_accounts[split("/",each.value)[1]].kind
+    id          = confluent_service_account.service_accounts[split("/", each.value)[1]].id
+    api_version = confluent_service_account.service_accounts[split("/", each.value)[1]].api_version
+    kind        = confluent_service_account.service_accounts[split("/", each.value)[1]].kind
   }
 
   managed_resource {
@@ -228,6 +228,11 @@ resource "confluent_kafka_cluster" "cluster" {
     content {
       cku = var.cku
     }
+  }
+
+  dynamic "enterprise" {
+    for_each = lower(var.cluster_tier) == "enterprise" ? [1] : []
+    content {}
   }
 
   environment {

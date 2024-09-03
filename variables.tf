@@ -82,7 +82,7 @@ variable "cku" {
 
 variable "cluster_tier" {
   type        = string
-  description = "type of cluster to provision: basic, standard or dedicated"
+  description = "type of cluster to provision: basic, standard, dedicated or enterprise"
 }
 
 variable "enable_metric_exporters" {

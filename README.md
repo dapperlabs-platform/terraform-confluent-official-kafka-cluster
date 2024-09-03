@@ -120,7 +120,7 @@ No modules.
 | <a name="input_ccloud_exporter_container_resources"></a> [ccloud\_exporter\_container\_resources](#input\_ccloud\_exporter\_container\_resources) | Container resource limit configuration | `map(map(string))` | <pre>{<br>  "limits": {<br>    "cpu": "500m",<br>    "memory": "2Gi"<br>  },<br>  "requests": {<br>    "cpu": "250m",<br>    "memory": "1Gi"<br>  }<br>}</pre> | no |
 | <a name="input_ccloud_exporter_image_version"></a> [ccloud\_exporter\_image\_version](#input\_ccloud\_exporter\_image\_version) | Exporter Image Version | `string` | `"latest"` | no |
 | <a name="input_cku"></a> [cku](#input\_cku) | Number of CKUs | `number` | `2` | no |
-| <a name="input_cluster_tier"></a> [cluster\_tier](#input\_cluster\_tier) | type of cluster to provision: basic, standard or dedicated | `string` | n/a | yes |
+| <a name="input_cluster_tier"></a> [cluster\_tier](#input\_cluster\_tier) | type of cluster to provision: basic, standard, dedicated or enterprise | `string` | n/a | yes |
 | <a name="input_cluster_user_roles"></a> [cluster\_user\_roles](#input\_cluster\_user\_roles) | Map of users with list of roles for Cluster-level access | `map(list(string))` | `{}` | no |
 | <a name="input_create_grafana_dashboards"></a> [create\_grafana\_dashboards](#input\_create\_grafana\_dashboards) | Whether to create grafana dashboards with default metric exporter panels | `bool` | `false` | no |
 | <a name="input_enable_metric_exporters"></a> [enable\_metric\_exporters](#input\_enable\_metric\_exporters) | Whether to deploy kafka-lag-exporter and ccloud-exporter in a kubernetes cluster | `bool` | `false` | no |
