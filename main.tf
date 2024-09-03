@@ -223,6 +223,11 @@ resource "confluent_kafka_cluster" "cluster" {
     content {}
   }
 
+  dynamic "enterprise" {
+    for_each = lower(var.cluster_tier) == "enterprise" ? [1] : []
+    content {}
+  }
+
   dynamic "dedicated" {
     for_each = lower(var.cluster_tier) == "dedicated" ? [1] : []
     content {
